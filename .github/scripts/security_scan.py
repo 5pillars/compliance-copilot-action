@@ -158,7 +158,7 @@ def process_pull_request():
     for file in pull_request.get_files():
         fileName = file.filename
         fileAlias = f"Github-Action-Scan - {fileName}"
-        if fileName.endswith(('.tf', '.ts')):
+        if fileName.endswith(('.tf', '.ts', '.json')):
             print(f"Getting file results: {fileName}")
             get_file_results(fileName, fileAlias)
 
