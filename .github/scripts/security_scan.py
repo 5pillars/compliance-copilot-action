@@ -4,7 +4,6 @@ import json
 import requests
 from github import Github
 import time
-import sys
 
 # Initialize GitHub client
 g = Github(os.getenv('GITHUB_TOKEN'))
@@ -30,7 +29,7 @@ def encode_file_content(content: bytes):
     return base64.b64encode(content).decode()
 
 def upload_file(fileName, content):
-    """Upload Base64-encoded file content to an example API."""
+    """Upload Base64-encoded file content."""
     headers = {
         'Content-Type': 'application/json',
         "Authorization": f"Bearer {SIXPILLARS_API_TOKEN}"
@@ -48,10 +47,16 @@ def upload_file(fileName, content):
     )
     if response.status_code == 200:
         print(f"Uploaded {fileName} successfully.")
+        return 0 # success
     else:
         raise Exception(f"Failed to upload {fileName}. Status code: {response.status_code}, Response: {response.text}")
 
 def get_file_summary_text(summaryObj):
+    """
+    Return a summary string based on the dictionary containing the details.
+
+    :param summaryObj: The dictionary for the summary report.
+    """
     fileName = summaryObj["filename"]
     summaryId = str(summaryObj["summaryId"])
     passed = str(summaryObj["passed"])
@@ -72,6 +77,11 @@ def get_file_summary_text(summaryObj):
     return message
 
 def get_severity_emoji(severity):
+    """
+    Get a different coloured emoji based on the severity level.
+
+    :param severity: A string for the severity level.
+    """
     emoji = ""
     if severity.lower() == "critical":
         emoji = ":red_circle:"
@@ -84,6 +94,12 @@ def get_severity_emoji(severity):
     return emoji
 
 def post_review_comments(resultsObj, fileName):
+    """
+    Post review comments onto the Github PR for each finding.
+
+    :param fileName: A string for the name of the file to get the result for.
+    :param resultsObj: The list of results from the API response.
+    """
     commentHashMap = {}
     commit_id = pull_request.head.sha # Get the latest commit SHA in the PR
     commit = repo.get_commit(sha=commit_id)  # Get the commit instance using the commit SHA
@@ -115,52 +131,103 @@ def post_review_comments(resultsObj, fileName):
             print("Error posting PR comment:", error)
 
 def get_file_results(fileName, fileAlias):
-    try:
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {SIXPILLARS_API_TOKEN}",
-        }
-        baseFileName = os.path.basename(fileName)
-        data = {
-            "fileAlias": fileAlias, 
-            "fileName": baseFileName
-        }
-        response = requests.post(
-            SIXPILLARS_API_RESULT_URL, 
-            headers=headers, 
-            data=json.dumps(data)
-        )
-        print("Status Code", response.status_code)
-        obj = json.loads(response.text)
-        summaryMessage = get_file_summary_text(obj["summary"])
+    """
+    Get the results from the API for this specific file name and alias.
+
+    :param fileName: A string for the name of the file to get the result for.
+    :param fileAlias: A string for the alias of the file to get the result for.
+    """
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {SIXPILLARS_API_TOKEN}",
+    }
+    baseFileName = os.path.basename(fileName)
+    data = {
+        "fileAlias": fileAlias, 
+        "fileName": baseFileName
+    }
+    response = requests.post(
+        SIXPILLARS_API_RESULT_URL, 
+        headers=headers, 
+        data=json.dumps(data)
+    )
+    jsonResponse = response.json()
+    if jsonResponse.get("msg") == "success":
+        summaryMessage = get_file_summary_text(jsonResponse["summary"])
         pull_request.create_issue_comment(summaryMessage)
         print("Issue Comment posted to PR #{}".format(pr_number))
-        post_review_comments(obj["results"], fileName)
-    except Exception as error:
-        print(str(error))
+        post_review_comments(jsonResponse["results"], fileName)
+        return 0 # success
+    else:
+        return 1 # error
 
-def process_pull_request():
-    """Process each file in the pull request."""
-    for file in pull_request.get_files():
-        fileName = file.filename
-        if fileName.endswith(('.tf', '.ts', '.json')):  # Add other IaC file extensions as needed
-            print(f"Processing file: {fileName}")
-            # Fetch the actual file content
-            content_file = repo.get_contents(fileName, ref=pull_request.head.ref)
-            encoded_content = encode_file_content(content_file.decoded_content)
-            upload_file(fileName, encoded_content)
-    # Wait for 5 mins
-    print("Waiting for templates to be uploaded and scanned....")
-    seconds = 60
-    for i in range(2):
+def check_file_results(file_queue):
+    """
+    Check the results for each file in the queue and return the list of files still pending results.
+
+    :param file_queue: List of files to check.
+    """
+    remaining_files = []
+    for file_name in file_queue:
+        file_alias = f"Github-Action-Scan - {file_name}"
+        print(f"Getting file results: {file_name}")
+        status_code = get_file_results(file_name, file_alias)
+        if status_code != 0:
+            remaining_files.append(file_name)
+    if remaining_files:
+        print(f"Could not get file results for: {remaining_files}")
+    return remaining_files
+
+def wait_and_check_results(uploaded_files):
+    """
+    Periodically check the scan results of uploaded files.
+
+    :param uploaded_files: List of file names that have been uploaded.
+    """
+    seconds = 60 * 5  # 5 minutes
+    file_queue = [*uploaded_files]  # Start with all uploaded files
+    for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
         time.sleep(seconds)
-        print("paused: " + str(seconds * (i + 1)) + " seconds")
-    for file in pull_request.get_files():
-        fileName = file.filename
-        fileAlias = f"Github-Action-Scan - {fileName}"
-        if fileName.endswith(('.tf', '.ts', '.json')):
-            print(f"Getting file results: {fileName}")
-            get_file_results(fileName, fileAlias)
+        print(f"Paused: {seconds * (i + 1)} seconds")
+        file_queue = check_file_results(file_queue)
+
+def process_files(file_names, pull_request, repo):
+    """
+    Process and upload files, returning a list of successfully uploaded file names.
+
+    :param file_names: List of file names to be processed.
+    :param pull_request: An object representing the GitHub pull request.
+    :param repo: The repository from which files are fetched.
+    """
+    uploaded_files = []
+    for file_name in file_names:
+        try:
+            print(f"Processing file: {file_name}")
+            content_file = repo.get_contents(file_name, ref=pull_request.head.ref)
+            encoded_content = encode_file_content(content_file.decoded_content)
+            status_code = upload_file(file_name, encoded_content)
+            if status_code == 0:
+                uploaded_files.append(file_name)
+        except Exception as e:
+            print(f"Error processing file {file_name}: {str(e)}")
+    return uploaded_files
+
+def process_pull_request(pull_request, repo):
+    """
+    Process each file in the pull request that matches specific extensions and
+    manage the upload and scanning of these files.
+
+    :param pull_request: An object representing the GitHub pull request.
+    :param repo: The repository from which files are fetched.
+    """
+    all_file_names = [
+        file.filename for file in pull_request.get_files()
+        if file.filename.endswith(('.tf', '.ts', '.json'))
+    ]
+    uploaded_files = process_files(all_file_names, pull_request, repo)
+
+    # Wait and check the scan results for uploaded files
+    wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
-    process_pull_request()
+    process_pull_request(pull_request, repo)
