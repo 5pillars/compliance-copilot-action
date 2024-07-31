@@ -1,0 +1,49 @@
+name: 6pillars.ai IaC Security Scan
+description: "Run 6pillars.ai IaC security scan on pull requests"
+author: "6pillars"
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: "6pillars"
+  color: "orange"
+
+inputs:
+  sixpillars_api_token:
+    description: "6pillars.ai API token"
+    required: true
+  github_repository:
+    description: "GitHub repository"
+    required: true
+  github_pull_request_number:
+    description: "GitHub pull request number"
+    required: true
+  github_token:
+    description: "GitHub token"
+    required: true
+  timeoutSeconds:
+    description: "Time in seconds to wait for testing to complete before initiating a timeout of the action."
+    default: 1200
+
+outputs:
+  time:
+    description: "Your output description here"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.x"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Run security scan script
+      env:
+        PULL_REQUEST_NUMBER: ${{ inputs.github_pull_request_number }}
+        GITHUB_REPOSITORY: ${{ inputs.github_repository }}
+        SIXPILLARS_API_TOKEN: ${{ inputs.sixpillars_api_token }}
+        SIXPILLARS_API_UPLOAD_URL:
+        SIXPILLARS_API_RESULT_URL:
+        TIMEOUT_SECONDS: ${{ inputs.timeoutSeconds }}
+      run: python security_scan.py
