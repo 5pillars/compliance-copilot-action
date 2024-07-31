@@ -4,7 +4,7 @@ author: "6pillars"
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: "6pillars"
+  icon: "shield"
   color: "orange"
 
 inputs:
