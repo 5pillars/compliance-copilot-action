@@ -29,22 +29,10 @@ outputs:
     description: "Your output description here"
 
 runs:
-  using: "composite"
-  steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v3
-      with:
-        python-version: "3.x"
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-      shell: bash
-    - name: Run security scan script
-      env:
-        PULL_REQUEST_NUMBER: ${{ inputs.github_pull_request_number }}
-        GITHUB_REPOSITORY: ${{ inputs.github_repository }}
-        SIXPILLARS_API_TOKEN: ${{ inputs.sixpillars_api_token }}
-        SIXPILLARS_API_UPLOAD_URL:
-        SIXPILLARS_API_RESULT_URL:
-        TIMEOUT_SECONDS: ${{ inputs.timeoutSeconds }}
-      run: python security_scan.py
-      shell: bash
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - {{ inputs.github_pull_request_number }}
+    - ${{ inputs.github_repository }}
+    - ${{ inputs.sixpillars_api_token }}
+    - ${{ inputs.timeoutSeconds }}
