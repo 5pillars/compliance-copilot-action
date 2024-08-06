@@ -7,6 +7,7 @@ COPY requirements.txt /requirements.txt
 
 RUN pip install -r requirements.txt
 
+RUN ls
 RUN export PULL_REQUEST_NUMBER=$1
 RUN export GITHUB_REPOSITORY=$2
 RUN export SIXPILLARS_API_TOKEN=$3
