@@ -37,6 +37,7 @@ runs:
         python-version: "3.x"
     - name: Install dependencies
       run: pip install -r requirements.txt
+      shell: bash
     - name: Run security scan script
       env:
         PULL_REQUEST_NUMBER: ${{ inputs.github_pull_request_number }}
@@ -46,3 +47,4 @@ runs:
         SIXPILLARS_API_RESULT_URL:
         TIMEOUT_SECONDS: ${{ inputs.timeoutSeconds }}
       run: python security_scan.py
+      shell: bash
