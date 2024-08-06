@@ -12,4 +12,4 @@ RUN export SIXPILLARS_API_TOKEN=$3
 RUN export TIMEOUT_SECONDS=$4
 
 # Code file to execute when the docker container starts up (`security_scan.py`)
-CMD ["python", "./security_scan.py"] 
+ENTRYPOINT ["python", "./security_scan.py"] 
