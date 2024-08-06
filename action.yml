@@ -32,7 +32,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - {{ inputs.github_pull_request_number }}
+    - ${{ inputs.github_pull_request_number }}
     - ${{ inputs.github_repository }}
     - ${{ inputs.sixpillars_api_token }}
     - ${{ inputs.timeoutSeconds }}
