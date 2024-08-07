@@ -13,7 +13,17 @@ inputs:
     default: 1200
   complianceCopilotUrl:
     description : "Compliance Copilot Url"
-    default: https://api.app.6pillars.ai
+    default: "https://api.app.6pillars.ai"
+  excludeFolders :
+    description: "Skip folders from being processed"
+    default : ".github"
+  folderPath :
+    description: "Specify a folder path to process"
+    default : ""
+  skipPullRequestComments :
+    description: "Skip comments in Pull Request"
+    default : true
+    
 
 outputs:
   time:
@@ -25,3 +35,6 @@ runs:
   args:
     - ${{ inputs.timeoutSeconds }}
     - ${{ inputs.complianceCopilotUrl }}
+    - ${{ inputs.excludeFolders }}
+    - ${{ inputs.folderPath }}
+    - ${{ inputs.skipPullRequestComments }}
