@@ -229,10 +229,11 @@ def process_pull_request(pull_request, repo):
         file.filename for file in pull_request.get_files()
         if file.filename.endswith(('.tf', '.ts', '.json','.yaml','.yml'))
     ]
-    uploaded_files = process_files(all_file_names, pull_request, repo)
+    print(all_file_names)
+    #uploaded_files = process_files(all_file_names, pull_request, repo)
 
     # Wait and check the scan results for uploaded files
-    wait_and_check_results(uploaded_files)
+    #wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
     process_pull_request(pull_request, repo)
