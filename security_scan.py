@@ -22,9 +22,10 @@ except Exception as error:
 
 SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
 print(SIXPILLARS_API_TOKEN)
-print(os.getenv("SIXPILLARS_URL"))
-SIXPILLARS_API_UPLOAD_URL = os.getenv("SIXPILLARS_URL") + "/templatescanner/upload-template"
-SIXPILLARS_API_RESULT_URL = os.getenv("SIXPILLARS_URL") + "/templatescanner/result"
+SIXPILLARS_URL=os.getenv("SIXPILLARS_URL")
+print(SIXPILLARS_URL)
+SIXPILLARS_API_UPLOAD_URL = f"{SIXPILLARS_URL}/templatescanner/upload-template"
+SIXPILLARS_API_RESULT_URL = f"{SIXPILLARS_URL}/templatescanner/result"
 
 def encode_file_content(content: bytes):
     """Encode file contents in Base64."""
