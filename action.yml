@@ -23,6 +23,9 @@ inputs:
   timeoutSeconds:
     description: "Time in seconds to wait for testing to complete before initiating a timeout of the action."
     default: 1200
+  complianceCopilotUrl:
+    description : "Compliance Copilot Url"
+    default: https://api.app.6pillars.ai
 
 outputs:
   time:
@@ -36,3 +39,4 @@ runs:
     - ${{ inputs.github_repository }}
     - ${{ inputs.sixpillars_api_token }}
     - ${{ inputs.timeoutSeconds }}
+    - ${{ inputs.complianceCopilotUrl }}
