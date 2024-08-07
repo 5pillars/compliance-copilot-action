@@ -226,7 +226,7 @@ def process_pull_request(pull_request, repo):
     """
     all_file_names = [
         file.filename for file in pull_request.get_files()
-        if file.filename.endswith(('.tf', '.ts', '.json'))
+        if file.filename.endswith(('.tf', '.ts', '.json','.yaml','.yml'))
     ]
     uploaded_files = process_files(all_file_names, pull_request, repo)
 
