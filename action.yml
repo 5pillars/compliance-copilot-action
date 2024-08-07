@@ -18,7 +18,7 @@ inputs:
     description: "GitHub pull request number"
     required: true
   token:
-    description: "GitHub token"
+    description: "GitHub repository token"
     required: true
   timeoutSeconds:
     description: "Time in seconds to wait for testing to complete before initiating a timeout of the action."
@@ -37,7 +37,7 @@ runs:
   args:
     - ${{ inputs.sixpillarsApiToken }}
     - ${{ inputs.repository }}
-    - ${{ inputs.sixpillarsApiToken }}
+    - ${{ inputs.pullRequestNumber }}
     - ${{ inputs.token }}
     - ${{ inputs.timeoutSeconds }}
     - ${{ inputs.complianceCopilotUrl }}
