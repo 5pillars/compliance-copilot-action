@@ -11,6 +11,15 @@ inputs:
   sixpillarsApiToken:
     description: "6pillars.ai API token"
     required: true
+  repository:
+    description: "GitHub repository"
+    required: true
+  pullRequestNumber:
+    description: "GitHub pull request number"
+    required: true
+  token:
+    description: "GitHub token"
+    required: true
   timeoutSeconds:
     description: "Time in seconds to wait for testing to complete before initiating a timeout of the action."
     default: 1200
@@ -27,5 +36,8 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.sixpillarsApiToken }}
+    - ${{ inputs.repository }}
+    - ${{ inputs.sixpillarsApiToken }}
+    - ${{ inputs.token }}
     - ${{ inputs.timeoutSeconds }}
     - ${{ inputs.complianceCopilotUrl }}
