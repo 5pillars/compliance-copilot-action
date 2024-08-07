@@ -22,9 +22,9 @@ except Exception as error:
     raise Exception("Could not find the repository/PR")
 
 SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
-print(SIXPILLARS_API_TOKEN)
+print("SIXPILLARS_API_TOKEN",SIXPILLARS_API_TOKEN)
 SIXPILLARS_URL=os.getenv("INPUT_COMPLIANCECOPILOTURL")
-print(SIXPILLARS_URL)
+print("SIXPILLARS_URL",SIXPILLARS_URL)
 SIXPILLARS_API_UPLOAD_URL = f"{SIXPILLARS_URL}/templatescanner/upload-template"
 SIXPILLARS_API_RESULT_URL = f"{SIXPILLARS_URL}/templatescanner/result"
 
@@ -188,7 +188,7 @@ def wait_and_check_results(uploaded_files):
 
     :param uploaded_files: List of file names that have been uploaded.
     """
-    seconds = 60 * 5  # 5 minutes
+    seconds = 1 * 5  # 5 minutes
     file_queue = [*uploaded_files]  # Start with all uploaded files
     for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
         time.sleep(seconds)
