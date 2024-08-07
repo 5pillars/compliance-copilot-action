@@ -188,12 +188,13 @@ def wait_and_check_results(uploaded_files):
 
     :param uploaded_files: List of file names that have been uploaded.
     """
-    seconds = 1 * 5  # 5 minutes
+    seconds = 60 * 5  # 5 minutes
     file_queue = [*uploaded_files]  # Start with all uploaded files
-    for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
-        time.sleep(seconds)
-        print(f"Paused: {seconds * (i + 1)} seconds")
-        file_queue = check_file_results(file_queue)
+    if len(file_queue) > 0:
+        for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
+            time.sleep(seconds)
+            print(f"Paused: {seconds * (i + 1)} seconds")
+            file_queue = check_file_results(file_queue)
 
 def process_files(file_names, pull_request, repo):
     """
