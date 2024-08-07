@@ -21,8 +21,8 @@ except Exception as error:
     raise Exception("Could not find the repository/PR")
 
 SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
-SIXPILLARS_API_UPLOAD_URL = os.getenv("URL") + "/templatescanner/upload-template"
-SIXPILLARS_API_RESULT_URL = os.getenv("URL") + "/templatescanner/result"
+SIXPILLARS_API_UPLOAD_URL = os.getenv("SIXPILLARS_URL") + "/templatescanner/upload-template"
+SIXPILLARS_API_RESULT_URL = os.getenv("SIXPILLARS_URL") + "/templatescanner/result"
 
 def encode_file_content(content: bytes):
     """Encode file contents in Base64."""
