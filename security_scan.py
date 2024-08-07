@@ -9,6 +9,7 @@ import time
 g = Github(os.getenv('GITHUB_TOKEN'))
 
 # Get repository, pull request ID from environment variables set by GitHub Actions
+print(os.environ)
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
 try:
