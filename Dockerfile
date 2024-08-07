@@ -13,6 +13,7 @@ RUN export GITHUB_REPOSITORY="$2"
 RUN export SIXPILLARS_API_TOKEN="$3"
 RUN export TIMEOUT_SECONDS="$4"
 RUN export SIXPILLARS_URL="$5"
+RUN echo $3 $4 $5
 
 # Code file to execute when the docker container starts up (`security_scan.py`)
 ENTRYPOINT ["python", "/security_scan.py"] 
