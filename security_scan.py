@@ -15,10 +15,10 @@ SIXPILLARS_URL=os.getenv("INPUT_COMPLIANCECOPILOTURL")
 SIXPILLARS_API_UPLOAD_URL = f"{SIXPILLARS_URL}/templatescanner/upload-template"
 SIXPILLARS_API_RESULT_URL = f"{SIXPILLARS_URL}/templatescanner/result"
 TIMEOUT_SECONDS =  os.getenv("INPUT_TIMEOUTSECONDS") 
-EXCLUDE_FOLDERS = os.getenv("INPUT_EXCLUDEFOLDERS",[])
+EXCLUDE_FOLDER = os.getenv("INPUT_EXCLUDEFOLDER")
 FOLDER_PATH = os.getenv("INPUT_FOLDERPATH","")
 SKIP_PULL_REQUEST_COMMENTS = os.getenv("INPUT_SKIPPULLREQUESTCOMMENTS")
-print("inputs",EXCLUDE_FOLDERS,FOLDER_PATH,SKIP_PULL_REQUEST_COMMENTS)
+print("inputs",TIMEOUT_SECONDS,",",EXCLUDE_FOLDER,",",FOLDER_PATH,",",SKIP_PULL_REQUEST_COMMENTS)
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
 try:
@@ -231,7 +231,7 @@ def process_pull_request(pull_request, repo):
         file.filename for file in pull_request.get_files()
         if file.filename.endswith(('.tf', '.ts', '.json','.yaml')) 
             and FOLDER_PATH in file.filename
-            and not any(folder in file.filename for folder in EXCLUDE_FOLDERS) 
+            and not EXCLUDE_FOLDER in file.filename
     ]
     print(all_file_names)
     uploaded_files = process_files(all_file_names, pull_request, repo)
