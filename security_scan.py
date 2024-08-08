@@ -9,7 +9,6 @@ import time
 g = Github(os.getenv('GITHUB_TOKEN'))
 
 # Get repository, pull request ID from environment variables set by GitHub Actions
-print(os.environ)
 SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
 SIXPILLARS_URL=os.getenv("INPUT_COMPLIANCECOPILOTURL")
 SIXPILLARS_API_UPLOAD_URL = f"{SIXPILLARS_URL}/templatescanner/upload-template"
@@ -18,7 +17,8 @@ TIMEOUT_SECONDS =  os.getenv("INPUT_TIMEOUTSECONDS")
 EXCLUDE_FOLDER = os.getenv("INPUT_EXCLUDEFOLDER")
 FOLDER_PATH = os.getenv("INPUT_FOLDERPATH","")
 SKIP_PULL_REQUEST_COMMENTS = os.getenv("INPUT_SKIPPULLREQUESTCOMMENTS")
-print(f"inputs-{TIMEOUT_SECONDS}-{EXCLUDE_FOLDER}-{FOLDER_PATH}-{SKIP_PULL_REQUEST_COMMENTS}")
+SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY)
+print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
 try:
