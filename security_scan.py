@@ -21,6 +21,7 @@ SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY")
 print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
+global check_failed = False
 try:
     print("Repository name: ", repo_name)
     print("PR #: ", pr_number)
@@ -71,6 +72,8 @@ def get_file_summary_text(summaryObj):
     medium = str(summaryObj["medium"])
     low = str(summaryObj["low"])
     failed = str(summaryObj["failed"])
+    if not check_failed and SEVERITY_LEVEL.lower() in summaryObj and int(summaryObj[SEVERITY_LEVEL.lower()]) > 0 :
+        check_failed = True
     message = f"""Security report summary from 6pillars.ai for file {fileName}:
         Passed Checks: {passed}
         Failed Checks: {failed}
@@ -242,6 +245,8 @@ def process_pull_request(pull_request, repo):
     
         # Wait and check the scan results for uploaded files
         wait_and_check_results(uploaded_files)
+    if check_failed:
+        raise Exception(f"Found failed findings with minimum severity level {SEVERITY_LEVEL}")  
 
 if __name__ == "__main__":
     process_pull_request(pull_request, repo)
