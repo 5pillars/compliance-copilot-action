@@ -18,7 +18,7 @@ TIMEOUT_SECONDS =  os.getenv("INPUT_TIMEOUTSECONDS")
 EXCLUDE_FOLDER = os.getenv("INPUT_EXCLUDEFOLDER")
 FOLDER_PATH = os.getenv("INPUT_FOLDERPATH","")
 SKIP_PULL_REQUEST_COMMENTS = os.getenv("INPUT_SKIPPULLREQUESTCOMMENTS")
-print("inputs",TIMEOUT_SECONDS,",",EXCLUDE_FOLDER,",",FOLDER_PATH,",",SKIP_PULL_REQUEST_COMMENTS)
+print(f"inputs-{TIMEOUT_SECONDS}-{EXCLUDE_FOLDER}-{FOLDER_PATH}-{SKIP_PULL_REQUEST_COMMENTS}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
 try:
@@ -237,6 +237,7 @@ def process_pull_request(pull_request, repo):
     uploaded_files = process_files(all_file_names, pull_request, repo)
 
     # Wait and check the scan results for uploaded files
+    print(not SKIP_PULL_REQUEST_COMMENTS)
     if not SKIP_PULL_REQUEST_COMMENTS:
         wait_and_check_results(uploaded_files)
 
