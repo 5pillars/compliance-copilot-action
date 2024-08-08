@@ -235,7 +235,7 @@ def process_pull_request(pull_request, repo):
             and not EXCLUDE_FOLDER in file.filename
     ]
     print(all_file_names)
-    if len(file_queue) > 0:
+    if len(all_file_names) > 0:
         uploaded_files = process_files(all_file_names, pull_request, repo)
     
         # Wait and check the scan results for uploaded files
