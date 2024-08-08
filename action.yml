@@ -24,7 +24,10 @@ inputs:
     type: boolean
     description: "Skip comments in Pull Request"
     default: false
-
+  minimumSeverity:
+    description: "Minimum severity level to fail the check"
+    required: true
+    default: "Critical"
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -34,3 +37,4 @@ runs:
     - ${{ inputs.excludeFolder }}
     - ${{ inputs.folderPath }}
     - ${{ inputs.skipPullRequestComments }}
+    - ${{ inputs.minimumSeverity }}
