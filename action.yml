@@ -12,19 +12,17 @@ inputs:
     description: "Time in seconds to wait for testing to complete before initiating a timeout of the action."
     default: 1200
   complianceCopilotUrl:
-    description : "Compliance Copilot Url"
+    description: "Compliance Copilot Url"
     default: "https://api.app.6pillars.ai"
-  excludeFolders :
+  excludeFolder:
     description: "Skip folders from being processed"
-    default : |-
-      .github
-      .venv
+    default: .github
   folderPath :
     description: "Specify a folder path to process"
-    default : ""
+    default: ""
   skipPullRequestComments :
     description: "Skip comments in Pull Request"
-    default : true
+    default: false
 
 runs:
   using: 'docker'
@@ -32,6 +30,6 @@ runs:
   args:
     - ${{ inputs.timeoutSeconds }}
     - ${{ inputs.complianceCopilotUrl }}
-    - ${{ inputs.excludeFolders }}
+    - ${{ inputs.excludeFolder }}
     - ${{ inputs.folderPath }}
     - ${{ inputs.skipPullRequestComments }}
