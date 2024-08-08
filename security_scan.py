@@ -17,7 +17,7 @@ TIMEOUT_SECONDS =  os.getenv("INPUT_TIMEOUTSECONDS")
 EXCLUDE_FOLDER = os.getenv("INPUT_EXCLUDEFOLDER")
 FOLDER_PATH = os.getenv("INPUT_FOLDERPATH","")
 SKIP_PULL_REQUEST_COMMENTS = os.getenv("INPUT_SKIPPULLREQUESTCOMMENTS")
-SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY)
+SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY")
 print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
@@ -194,11 +194,10 @@ def wait_and_check_results(uploaded_files):
     seconds = 60 * 5  # 5 minutes
     file_queue = [*uploaded_files]  # Start with all uploaded files
     poll = round(int(TIMEOUT_SECONDS)/seconds)
-    if len(file_queue) > 0:
-        for i in range(poll):  # Every 5 minutes, try the request up to 20 minutes
-            time.sleep(seconds)
-            print(f"Paused: {seconds * (i + 1)} seconds")
-            file_queue = check_file_results(file_queue)
+    for i in range(poll):  # Every 5 minutes, try the request up to 20 minutes
+        time.sleep(seconds)
+        print(f"Paused: {seconds * (i + 1)} seconds")
+        file_queue = check_file_results(file_queue)
 
 def process_files(file_names, pull_request, repo):
     """
@@ -236,10 +235,11 @@ def process_pull_request(pull_request, repo):
             and not EXCLUDE_FOLDER in file.filename
     ]
     print(all_file_names)
-    uploaded_files = process_files(all_file_names, pull_request, repo)
-
-    # Wait and check the scan results for uploaded files
-    wait_and_check_results(uploaded_files)
+    if len(file_queue) > 0:
+        uploaded_files = process_files(all_file_names, pull_request, repo)
+    
+        # Wait and check the scan results for uploaded files
+        wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
     process_pull_request(pull_request, repo)
