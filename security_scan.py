@@ -195,7 +195,7 @@ def wait_and_check_results(uploaded_files):
     file_queue = [*uploaded_files]  # Start with all uploaded files
     poll = round(int(TIMEOUT_SECONDS)/seconds)
     if len(file_queue) > 0:
-        for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
+        for i in range(poll):  # Every 5 minutes, try the request up to 20 minutes
             time.sleep(seconds)
             print(f"Paused: {seconds * (i + 1)} seconds")
             file_queue = check_file_results(file_queue)
