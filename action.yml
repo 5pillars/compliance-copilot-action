@@ -21,6 +21,7 @@ inputs:
     description: "Specify a folder path to process"
     default: ""
   skipPullRequestComments :
+    type: boolean
     description: "Skip comments in Pull Request"
     default: false
 
