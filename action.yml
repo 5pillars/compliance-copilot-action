@@ -25,9 +25,15 @@ inputs:
     description: "Skip comments in Pull Request"
     default: false
   minimumSeverity:
+    type: choice
     description: "Minimum severity level to fail the check"
     required: true
-    default: "Critical"
+    default: CRITICAL
+    options: 
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+    - LOW
 runs:
   using: 'docker'
   image: 'Dockerfile'
