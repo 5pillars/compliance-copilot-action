@@ -162,7 +162,8 @@ def get_file_results(fileName, fileAlias):
         summaryMessage = get_file_summary_text(jsonResponse["summary"])
         pull_request.create_issue_comment(summaryMessage)
         print("Issue Comment posted to PR #{}".format(pr_number))
-        post_review_comments(jsonResponse["results"], fileName)
+        if SKIP_PULL_REQUEST_COMMENTS  == "false":
+            post_review_comments(jsonResponse["results"], fileName)
         return 0 # success
     else:
         return 1 # error
@@ -237,8 +238,6 @@ def process_pull_request(pull_request, repo):
     uploaded_files = process_files(all_file_names, pull_request, repo)
 
     # Wait and check the scan results for uploaded files
-    print(SKIP_PULL_REQUEST_COMMENTS == "false")
-    if SKIP_PULL_REQUEST_COMMENTS  == "false":
         wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
