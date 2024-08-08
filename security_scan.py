@@ -239,7 +239,7 @@ def process_pull_request(pull_request, repo):
     uploaded_files = process_files(all_file_names, pull_request, repo)
 
     # Wait and check the scan results for uploaded files
-        wait_and_check_results(uploaded_files)
+    wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
     process_pull_request(pull_request, repo)
