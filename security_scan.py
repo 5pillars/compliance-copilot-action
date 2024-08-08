@@ -22,6 +22,7 @@ print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
 global check_failed
+check_failed = False
 try:
     print("Repository name: ", repo_name)
     print("PR #: ", pr_number)
