@@ -21,7 +21,7 @@ SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY")
 print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
-global check_failed = False
+global check_failed
 try:
     print("Repository name: ", repo_name)
     print("PR #: ", pr_number)
@@ -233,6 +233,7 @@ def process_pull_request(pull_request, repo):
     :param pull_request: An object representing the GitHub pull request.
     :param repo: The repository from which files are fetched.
     """
+    check_failed = False
     all_file_names = [
         file.filename for file in pull_request.get_files()
         if file.filename.endswith(('.tf', '.ts', '.json','.yaml')) 
