@@ -17,7 +17,8 @@ inputs:
   excludeFolders :
     description: "Skip folders from being processed"
     default : |-
-      ".github"
+      .github
+      .venv
   folderPath :
     description: "Specify a folder path to process"
     default : ""
