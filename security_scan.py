@@ -198,6 +198,8 @@ def wait_and_check_results(uploaded_files):
         time.sleep(seconds)
         print(f"Paused: {seconds * (i + 1)} seconds")
         file_queue = check_file_results(file_queue)
+        if len(file_queue) == 0:
+            break;
 
 def process_files(file_names, pull_request, repo):
     """
