@@ -11,21 +11,18 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 jobs:
-    6pillars-compliance-copilot:
-    runs-on: ubuntu-latest
-    name: compliance-copilot-action
-    env:
-      GITHUB_TOKEN: ${{ github.token }}
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
-    steps:
-    - name: Checkout repo
-        uses: actions/checkout@v4
-    - name: 6pillars ComplianceCopilot Github Action
-        id: 6pillars
-        uses: 5pillars/compliance-copilot-action@v1.0.0
+    compliance-copilot:
+      runs-on: ubuntu-latest
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      permissions:
+        contents: read
+        issues: write
+        pull-requests: write
+      steps:
+      - uses: actions/checkout@v4
+
+      - uses: 5pillars/compliance-copilot-action@v0.0.1
         env:
             SIXPILLARS_API_TOKEN: ${{ secrets.SIXPILLARS_API_TOKEN }}
             GITHUB_TOKEN: ${{ github.token }}
