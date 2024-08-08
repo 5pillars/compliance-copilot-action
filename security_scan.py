@@ -237,8 +237,8 @@ def process_pull_request(pull_request, repo):
     uploaded_files = process_files(all_file_names, pull_request, repo)
 
     # Wait and check the scan results for uploaded files
-    print(not SKIP_PULL_REQUEST_COMMENTS)
-    if not SKIP_PULL_REQUEST_COMMENTS:
+    print(SKIP_PULL_REQUEST_COMMENTS == "false")
+    if SKIP_PULL_REQUEST_COMMENTS  == "false":
         wait_and_check_results(uploaded_files)
 
 if __name__ == "__main__":
