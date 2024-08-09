@@ -13,8 +13,7 @@ on:
 jobs:
     compliance-copilot:
       runs-on: ubuntu-latest
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+      environment: production
       permissions:
         contents: read
         issues: write
@@ -22,12 +21,14 @@ jobs:
       steps:
       - uses: actions/checkout@v4
 
-      - uses: 5pillars/compliance-copilot-action@v0.0.1
+      - uses: 5pillars/compliance-copilot-action@v1.0.0
         env:
             SIXPILLARS_API_TOKEN: ${{ secrets.SIXPILLARS_API_TOKEN }}
             GITHUB_TOKEN: ${{ github.token }}
             GITHUB_REPOSITORY: $GITHUB_REPOSITORY
             PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+            minimumSeverity: 'CRITICAL'
 ```
 
 ## Parameters
