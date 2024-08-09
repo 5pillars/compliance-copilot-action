@@ -236,8 +236,10 @@ def process_pull_request(pull_request, repo):
     """
     global check_failed
     check_failed = False
+    files = pull_request.get_files()
+    print(files,FOLDER_PATH,EXCLUDE_FOLDER)
     all_file_names = [
-        file.filename for file in pull_request.get_files()
+        file.filename for file in files
         if file.filename.endswith(('.tf', '.ts', '.json','.yaml')) 
             and FOLDER_PATH in file.filename
             and not EXCLUDE_FOLDER in file.filename
