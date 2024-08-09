@@ -43,7 +43,7 @@ jobs:
 ## Parameters
 - `minimumSeverity` - **_(Required)_** The threshold at which the detected finding severity level  will cause your workflow to fail. One of `NONE`, `LOW`, `MODERATE`, `HIGH`, or `CRITICAL`.
 - `skipPullRequestComments` - **_(Optional)_** Do you like skip pull request file level comments ?. Defaults to false.
-- `folderPath` - **_(Optional)_** Specific folder path to search file changes. Defaults to /.
+- `folderPath` - **_(Optional)_** Specific folder path to search file changes. Defaults to "".
 - `excludeFolder` - **_(Optional)_** Specific folder to avoid being scanned. Defaults to .github
   
 ## Secrets
