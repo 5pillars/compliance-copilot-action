@@ -1,5 +1,5 @@
 name: 6pillars Compliance Copilot Action
-description: "Run 6pillars.ai IaC security scan on pull requests"
+description: "Run 6pillars.ai Compliance Copilot to detect AWS IaC misconfigurations in your pull requests"
 author: "6pillars"
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
