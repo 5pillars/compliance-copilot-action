@@ -9,8 +9,19 @@ import time
 g = Github(os.getenv('GITHUB_TOKEN'))
 
 # Get repository, pull request ID from environment variables set by GitHub Actions
+SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
+SIXPILLARS_URL=os.getenv("INPUT_COMPLIANCECOPILOTURL")
+SIXPILLARS_API_UPLOAD_URL = f"{SIXPILLARS_URL}/templatescanner/upload-template"
+SIXPILLARS_API_RESULT_URL = f"{SIXPILLARS_URL}/templatescanner/result"
+TIMEOUT_SECONDS =  os.getenv("INPUT_TIMEOUTSECONDS") 
+EXCLUDE_FOLDER = os.getenv("INPUT_EXCLUDEFOLDER")
+FOLDER_PATH = os.getenv("INPUT_FOLDERPATH","")
+SKIP_PULL_REQUEST_COMMENTS = os.getenv("INPUT_SKIPPULLREQUESTCOMMENTS")
+SEVERITY_LEVEL = os.getenv("INPUT_MINIMUMSEVERITY")
+print(f"inputs-{SEVERITY_LEVEL}")
 repo_name = os.getenv('GITHUB_REPOSITORY')
 pr_number = int(os.getenv('PULL_REQUEST_NUMBER'))  # GitHub Actions should set this as an environment variable
+check_failed = False
 try:
     print("Repository name: ", repo_name)
     print("PR #: ", pr_number)
@@ -19,10 +30,6 @@ try:
 except Exception as error:
     print(str(error))
     raise Exception("Could not find the repository/PR")
-
-SIXPILLARS_API_TOKEN = os.getenv("SIXPILLARS_API_TOKEN")
-SIXPILLARS_API_UPLOAD_URL = os.getenv("SIXPILLARS_API_UPLOAD_URL")
-SIXPILLARS_API_RESULT_URL = os.getenv("SIXPILLARS_API_RESULT_URL")
 
 def encode_file_content(content: bytes):
     """Encode file contents in Base64."""
@@ -65,6 +72,9 @@ def get_file_summary_text(summaryObj):
     medium = str(summaryObj["medium"])
     low = str(summaryObj["low"])
     failed = str(summaryObj["failed"])
+    global check_failed
+    if not check_failed and SEVERITY_LEVEL.lower() in summaryObj and int(summaryObj[SEVERITY_LEVEL.lower()]) > 0 :
+        check_failed = True
     message = f"""Security report summary from 6pillars.ai for file {fileName}:
         Passed Checks: {passed}
         Failed Checks: {failed}
@@ -156,7 +166,8 @@ def get_file_results(fileName, fileAlias):
         summaryMessage = get_file_summary_text(jsonResponse["summary"])
         pull_request.create_issue_comment(summaryMessage)
         print("Issue Comment posted to PR #{}".format(pr_number))
-        post_review_comments(jsonResponse["results"], fileName)
+        if SKIP_PULL_REQUEST_COMMENTS  == "false":
+            post_review_comments(jsonResponse["results"], fileName)
         return 0 # success
     else:
         return 1 # error
@@ -186,10 +197,13 @@ def wait_and_check_results(uploaded_files):
     """
     seconds = 60 * 5  # 5 minutes
     file_queue = [*uploaded_files]  # Start with all uploaded files
-    for i in range(4):  # Every 5 minutes, try the request up to 20 minutes
+    poll = round(int(TIMEOUT_SECONDS)/seconds)
+    for i in range(poll):  # Every 5 minutes, try the request up to 20 minutes
         time.sleep(seconds)
         print(f"Paused: {seconds * (i + 1)} seconds")
         file_queue = check_file_results(file_queue)
+        if len(file_queue) == 0:
+            break;
 
 def process_files(file_names, pull_request, repo):
     """
@@ -220,14 +234,25 @@ def process_pull_request(pull_request, repo):
     :param pull_request: An object representing the GitHub pull request.
     :param repo: The repository from which files are fetched.
     """
+    global check_failed
+    check_failed = False
+    files = pull_request.get_files()
+    for file in files:
+        print(file.filename,FOLDER_PATH,EXCLUDE_FOLDER)
     all_file_names = [
-        file.filename for file in pull_request.get_files()
-        if file.filename.endswith(('.tf', '.ts', '.json'))
+        file.filename for file in files
+        if file.filename.endswith(('.tf', '.ts', '.json','.yaml')) 
+            and FOLDER_PATH in file.filename
+            and not EXCLUDE_FOLDER in file.filename
     ]
-    uploaded_files = process_files(all_file_names, pull_request, repo)
-
-    # Wait and check the scan results for uploaded files
-    wait_and_check_results(uploaded_files)
+    print(all_file_names)
+    if len(all_file_names) > 0:
+        uploaded_files = process_files(all_file_names, pull_request, repo)
+    
+        # Wait and check the scan results for uploaded files
+        wait_and_check_results(uploaded_files)
+    if check_failed:
+        raise Exception(f"Found failed findings with minimum severity level {SEVERITY_LEVEL}")  
 
 if __name__ == "__main__":
     process_pull_request(pull_request, repo)
