@@ -34,7 +34,7 @@ jobs:
             PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
         with:
             minimumSeverity: 'CRITICAL'
-            skipPullRequestComments: true
+            skipPullRequestComments: false
             folderPath: /
             excludeFolder: .github
 
