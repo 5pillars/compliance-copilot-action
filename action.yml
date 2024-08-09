@@ -1,4 +1,4 @@
-name: 6pillars.ai IaC Security Scan
+name: 6pillars Compliance Copilot Action
 description: "Run 6pillars.ai IaC security scan on pull requests"
 author: "6pillars"
 
