@@ -26,7 +26,7 @@ inputs:
     default: false
   minimumSeverity:
     type: choice
-    description: "Minimum severity level to fail the check"
+    description: "Minimum severity level to fail the check and only comments are added based on minimum severity."
     required: true
     default: CRITICAL
     options: 
