@@ -4,6 +4,14 @@ import json
 import requests
 from github import Github
 import time
+from enum import Enum
+
+class Severity(Enum):
+    none = 0
+    critical = 1
+    high = 2
+    medium = 3
+    low = 4
 
 # Initialize GitHub client
 g = Github(os.getenv('GITHUB_TOKEN'))
@@ -120,7 +128,8 @@ def post_review_comments(resultsObj, fileName):
         severity = result.get("severity")
         checkId = result.get("id")
         severityEmoji = get_severity_emoji(severity)
-        if fileLineRange:
+       
+        if fileLineRange and  Severity[severity.lower()].value <= Severity[SEVERITY_LEVEL.lower()].value:
             startLine = int(fileLineRange.split("-")[0])
             if severityEmoji != "":
                 comment_body = f"{checkId} - {severity} {severityEmoji} - {description}"
