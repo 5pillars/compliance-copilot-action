@@ -35,7 +35,7 @@ jobs:
         with:
             minimumSeverity: 'CRITICAL'
             skipPullRequestComments: false
-            folderPath: /
+            folderPath: 
             excludeFolder: .github
 
 ```
